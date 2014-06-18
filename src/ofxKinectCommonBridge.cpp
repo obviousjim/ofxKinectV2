@@ -121,6 +121,42 @@ void ofxKinectCommonBridge::checkOpenGLError(string function){
     }
 }
 
+int ofxKinectCommonBridge::getGLFormat(KCBColorImageFormat format){
+	switch(format){
+	case KCBColorImageFormat_Rgba:
+		return GL_RGBA;
+	case KCBColorImageFormat_Bgra:
+		return GL_BGRA;
+	case KCBColorImageFormat_Yuy2:
+		return GL_RG16;
+	}
+}
+
+int ofxKinectCommonBridge::getGLFormat(ColorImageFormat format){
+	switch(format){
+	case ColorImageFormat_Rgba:
+		return GL_RGBA;
+	case ColorImageFormat_Bgra:
+		return GL_BGRA;
+	case ColorImageFormat_Yuy2:
+		return GL_RG16;
+	default:
+		ofLogError("ofxKinectCommonBridge::getGLFormat(ColorImageFormat)") << " Color source is of unsupported format";
+		return GL_LUMINANCE;
+	}
+}
+
+ColorImageFormat ofxKinectCommonBridge::getColorImageFormat(KCBColorImageFormat format){
+	switch(format){
+	case KCBColorImageFormat_Rgba:
+		return ColorImageFormat_Rgba;
+	case KCBColorImageFormat_Bgra:
+		return ColorImageFormat_Bgra;
+	case KCBColorImageFormat_Yuy2:
+		return ColorImageFormat_Yuy2;
+	}
+}
+
 /// updates the pixel buffers and textures
 /// make sure to call this to update to the latest incoming frames
 void ofxKinectCommonBridge::update()
@@ -144,22 +180,17 @@ void ofxKinectCommonBridge::update()
 		swap(pColorFrame, pColorFrameBack);
 
 		if(bUseTexture) {
-			if(bVideoIsInfrared) 
+			if(bVideoIsInfrared)
 			{
 				if(bProgrammableRenderer){
 					videoTex.loadData(pColorFrame->Buffer, colorFrameDescription.width, colorFrameDescription.height, GL_RED);
 				} else {
 					videoTex.loadData(pColorFrame->Buffer, colorFrameDescription.width, colorFrameDescription.height, GL_LUMINANCE16);
 				}
-			} 
+			}
 			else if(bVideoIsColor)
 			{
-				if( bProgrammableRenderer ) {
-					// programmable renderer likes this
-					videoTex.loadData(pColorFrame->Buffer, colorFrameDescription.width, colorFrameDescription.height, GL_RG16);
-				} else {
-					videoTex.loadData(pColorFrame->Buffer, colorFrameDescription.width, colorFrameDescription.height, GL_RGBA);
-				}
+				videoTex.loadData(pColorFrame->Buffer, colorFrameDescription.width, colorFrameDescription.height, getGLFormat(pColorFrame->Format));
 			}
 		}
 	} else {
@@ -506,30 +537,20 @@ bool ofxKinectCommonBridge::initDepthStream( bool mapDepthToColor )
 	return bInited;
 }
 
-bool ofxKinectCommonBridge::initColorStream( bool mapColorToDepth, ColorImageFormat format)
+bool ofxKinectCommonBridge::initColorStream( bool mapColorToDepth, KCBColorImageFormat format)
 {
 
 	KCBGetColorFrameDescription(hKinect, ColorImageFormat_Rgba, &colorFrameDescription);
 
 	if(bUseTexture){
-		if (format != ColorImageFormat_Rgba)
-		{
-			if (bProgrammableRenderer)
-			{
-				videoTex.allocate(colorFrameDescription.width, colorFrameDescription.height, GL_RG16);
-			}
-			else
-			{
-				ofLogError("ofxKinectCommonBridge::initColorStream", "yuy2 needs programmable renderer");
-			}
-		}
-		else
-		{ 
-			videoTex.allocate(colorFrameDescription.width, colorFrameDescription.height, GL_RGBA);
+		if (format == KCBColorImageFormat_Yuy2 && !bProgrammableRenderer){
+			ofLogError("ofxKinectCommonBridge::initColorStream", "yuy2 needs programmable renderer");
+		} else {
+			videoTex.allocate(colorFrameDescription.width, colorFrameDescription.height, getGLFormat(format));
 		}
 	}
 
-	if (format != ColorImageFormat_Rgba)
+	if (format == KCBColorImageFormat_Yuy2)
 	{
 		videoPixels.allocate(colorFrameDescription.width, colorFrameDescription.height, 2);
 		videoPixelsBack.allocate(colorFrameDescription.width, colorFrameDescription.height, 2);
@@ -543,13 +564,13 @@ bool ofxKinectCommonBridge::initColorStream( bool mapColorToDepth, ColorImageFor
 	pColorFrame = new KCBColorFrame();
 	pColorFrame->Buffer = videoPixels.getPixels();
 	pColorFrame->Size = colorFrameDescription.lengthInPixels * colorFrameDescription.bytesPerPixel;
-	pColorFrame->Format = format;
+	pColorFrame->Format = getColorImageFormat(format);
 
 
 	pColorFrameBack = new KCBColorFrame();
 	pColorFrameBack->Buffer = videoPixelsBack.getPixels();
 	pColorFrameBack->Size = colorFrameDescription.lengthInPixels * colorFrameDescription.bytesPerPixel;
-	pColorFrameBack->Format = format;
+	pColorFrameBack->Format = getColorImageFormat(format);
 
 	bVideoIsColor = true;
 	bVideoIsInfrared = false;

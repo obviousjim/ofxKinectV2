@@ -49,6 +49,15 @@ class Kv2Skeleton
 	map<JointType, Kv2Joint> joints;
 };
 
+//partially duplicated from ColorImageFormat as defined in Kinect.h
+typedef enum _KCBColorImageFormat KCBColorImageFormat;
+enum _KCBColorImageFormat
+{
+    KCBColorImageFormat_Rgba	= 1,
+    KCBColorImageFormat_Bgra	= 3,
+    KCBColorImageFormat_Yuy2	= 5
+} ;
+
 class ofxKinectCommonBridge : protected ofThread {
   public:
 	
@@ -58,7 +67,7 @@ class ofxKinectCommonBridge : protected ofThread {
 	// new API
 	bool initSensor( int id = 0 );
 	bool initDepthStream( bool mapDepthToColor = false );
-	bool initColorStream(bool mapColorToDepth = false, ColorImageFormat format = ColorImageFormat_Rgba);
+	bool initColorStream(bool mapColorToDepth = false, KCBColorImageFormat format = KCBColorImageFormat_Rgba);
 	bool initIRStream( int width, int height );
 	bool initSkeletonStream( bool seated );
 	bool start();
@@ -230,5 +239,8 @@ class ofxKinectCommonBridge : protected ofThread {
 	pair<JointType, JointType> skeletonDrawOrder[JointType_Count];
 
 	void checkOpenGLError(string function);
+	int getGLFormat(KCBColorImageFormat format);
+	int getGLFormat(ColorImageFormat format);
+	ColorImageFormat getColorImageFormat(KCBColorImageFormat format);
 
 };
