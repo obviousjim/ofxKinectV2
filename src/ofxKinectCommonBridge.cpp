@@ -408,10 +408,9 @@ void ofxKinectCommonBridge::drawSkeleton( int index, ofVec2f scale )
 	//}
 
 	//cout << skeletons[index].leftHandState << endl;
-	cout << skeletons[index].leftHandState << ", " << skeletons[index].rightHandState << endl;
+	cout << index << ": " << skeletons[index].leftHandState << ", " << skeletons[index].rightHandState << endl;
 
-	for (int i = 0; i < JointType_Count; i++)
-	{
+	for (int i = 0; i < JointType_Count; i++) {
 		ofSetLineWidth(2);
 
 		ofVec3f lineBegin = (skeletons[index].joints[skeletonDrawOrder[i].first].getPosition() + normalize) * scale3;
