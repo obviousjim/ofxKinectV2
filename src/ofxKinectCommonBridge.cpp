@@ -407,6 +407,8 @@ void ofxKinectCommonBridge::drawSkeleton( int index, ofVec2f scale )
 	//	lastPosition = joint.getPosition() * scale;
 	//}
 
+	cout << skeletons[index].hand << endl;
+
 	for (int i = 0; i < JointType_Count; i++)
 	{
 		ofSetLineWidth(2);
@@ -912,8 +914,7 @@ void ofxKinectCommonBridge::threadedFunction(){
 				bNeedsUpdateSkeleton = true;
 
 				// buffer for later
-				for (int i = 0; i < BODY_COUNT; ++i)
-				{
+				for (int i = 0; i < BODY_COUNT; ++i) {
 					backSkeletons[i].joints.clear();
 					backSkeletons[i].tracked = false;
 
@@ -926,8 +927,8 @@ void ofxKinectCommonBridge::threadedFunction(){
 					}
 
 					HRESULT hr = pBody->get_IsTracked(&isTracked);
-					if (isTracked)
-					{
+					if (isTracked) {
+						HRESULT hrHandState = ppBodies[i]->get_HandLeftState(&handstate);
 						HRESULT hrJoints = ppBodies[i]->GetJoints(JointType_Count, joints);
 						HRESULT hrOrient = ppBodies[i]->GetJointOrientations(JointType_Count, jointOrients);
 						if (FAILED(hrJoints))
@@ -940,12 +941,17 @@ void ofxKinectCommonBridge::threadedFunction(){
 							ofLogError("ofxKinectCommonBridge::threadedFunction") << "Failed to get orientations";
 						}
 
-						if (SUCCEEDED(hrJoints) && SUCCEEDED(hrOrient))
+						if (FAILED(hrHandState))
 						{
-							for (int j = 0; j < JointType_Count; ++j)
-							{
+							ofLogError("ofxKinectCommonBridge::threadedFunction") << "Failed to get hand state";
+						}
+
+						if (SUCCEEDED(hrJoints) && SUCCEEDED(hrOrient) && SUCCEEDED(hrHandState)) {
+							for (int j = 0; j < JointType_Count; ++j) {
 								backSkeletons[i].joints[joints[j].JointType] = Kv2Joint(joints[j], jointOrients[j]);
 							}
+
+							backSkeletons[i].hand = handstate;
 						}
 						backSkeletons[i].tracked = true;
 					}

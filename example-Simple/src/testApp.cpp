@@ -31,8 +31,7 @@ void testApp::draw()
 	//kinect v2 outputs depth/ir resolution of 512x424
 	kinect.drawDepth(0, ofGetHeight() - 424);
 	kinect.drawBodyIndex(512, ofGetHeight() - 424);
-	//kinect.drawAllSkeletons(ofVec2f(640,480));
-}
+	kinect.drawAllSkeletons(ofVec2f(640,480));}
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
