@@ -407,7 +407,8 @@ void ofxKinectCommonBridge::drawSkeleton( int index, ofVec2f scale )
 	//	lastPosition = joint.getPosition() * scale;
 	//}
 
-	cout << skeletons[index].hand << endl;
+	//cout << skeletons[index].leftHandState << endl;
+	cout << skeletons[index].leftHandState << ", " << skeletons[index].rightHandState << endl;
 
 	for (int i = 0; i < JointType_Count; i++)
 	{
@@ -928,7 +929,8 @@ void ofxKinectCommonBridge::threadedFunction(){
 
 					HRESULT hr = pBody->get_IsTracked(&isTracked);
 					if (isTracked) {
-						HRESULT hrHandState = ppBodies[i]->get_HandLeftState(&handstate);
+						HRESULT hrLeftHandState = ppBodies[i]->get_HandLeftState(&leftHandState);
+						HRESULT hrRightHandState = ppBodies[i]->get_HandRightState(&rightHandState);
 						HRESULT hrJoints = ppBodies[i]->GetJoints(JointType_Count, joints);
 						HRESULT hrOrient = ppBodies[i]->GetJointOrientations(JointType_Count, jointOrients);
 						if (FAILED(hrJoints))
@@ -941,17 +943,23 @@ void ofxKinectCommonBridge::threadedFunction(){
 							ofLogError("ofxKinectCommonBridge::threadedFunction") << "Failed to get orientations";
 						}
 
-						if (FAILED(hrHandState))
+						if (FAILED(hrLeftHandState))
 						{
-							ofLogError("ofxKinectCommonBridge::threadedFunction") << "Failed to get hand state";
+							ofLogError("ofxKinectCommonBridge::threadedFunction") << "Failed to get left hand state";
 						}
 
-						if (SUCCEEDED(hrJoints) && SUCCEEDED(hrOrient) && SUCCEEDED(hrHandState)) {
+						if (FAILED(hrRightHandState))
+						{
+							ofLogError("ofxKinectCommonBridge::threadedFunction") << "Failed to get right hand state";
+						}
+
+						if (SUCCEEDED(hrJoints) && SUCCEEDED(hrOrient) && SUCCEEDED(hrLeftHandState) && SUCCEEDED(hrRightHandState) ) {
 							for (int j = 0; j < JointType_Count; ++j) {
 								backSkeletons[i].joints[joints[j].JointType] = Kv2Joint(joints[j], jointOrients[j]);
 							}
 
-							backSkeletons[i].hand = handstate;
+							backSkeletons[i].leftHandState = leftHandState;
+							backSkeletons[i].rightHandState = rightHandState;
 						}
 						backSkeletons[i].tracked = true;
 					}

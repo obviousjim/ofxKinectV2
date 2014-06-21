@@ -46,7 +46,8 @@ class Kv2Skeleton
 {
   public:
 	bool tracked;
-	int hand;
+	int leftHandState;
+	int rightHandState;
 	map<JointType, Kv2Joint> joints;
 };
 
@@ -224,7 +225,7 @@ class ofxKinectCommonBridge : protected ofThread {
 	JointOrientation jointOrients[JointType_Count];
 	Joint joints[JointType_Count];
 
-	HandState handstate;
+	HandState leftHandState, rightHandState;
 
 	KCBBodyIndexFrame *pBodyIndexFrame, *pBodyIndexFrameBack;
 
