@@ -11,7 +11,7 @@ This is an openFrameworks addon for working with the Microsoft SDK for the Kinec
 * [openFrameworks with all the poco libs compiled for 2013](https://github.com/liquidzym/openFrameworks/tree/VS2013)
 * 
 
-even though the bropenFramework listed says it's compiled for 2013 you need Visual Studio 2012 Express for Windows Desktop.
+even though the ropenFramework listed says it's compiled for 2013 you need Visual Studio 2012 Express for Windows Desktop.
 
 * clone the oF repo recursively "git clone --recursive <repo>"
 * then clone this add on into the addons folder
