@@ -3,7 +3,7 @@ ofxKinectV2
 
 This is an openFrameworks addon for working with the Microsoft SDK for the Kinect V2. There's a few caveats: you need a fairly specific setup to get this working. You'll need
 
-* A computer with a USB 3 port (I'm on a MacBook Bro Retina mid 2012)
+* A computer with a USB 3 port (I'm on a MacBook Pro Retina mid 2012 with USB 3.0)
 * Windows 8.1 x64
 * [Visual Studio 2012](http://www.microsoft.com/en-us/download/details.aspx?id=34673)
 * [A Kinect V2](http://www.microsoft.com/en-us/kinectforwindows/Purchase/developer-sku.aspx)
