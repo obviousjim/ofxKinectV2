@@ -46,6 +46,8 @@ class Kv2Skeleton
 {
   public:
 	bool tracked;
+	int leftHandState;
+	int rightHandState;
 	map<JointType, Kv2Joint> joints;
 };
 
@@ -160,6 +162,7 @@ class ofxKinectCommonBridge : protected ofThread {
 	vector<Kv2Skeleton> skeletons;
 	vector<Kv2Skeleton> backSkeletons;
 
+
 	//quantize depth buffer to 8 bit range
 	vector<unsigned char> depthLookupTable;
 	void updateDepthLookupTable();
@@ -219,10 +222,12 @@ class ofxKinectCommonBridge : protected ofThread {
 	KCBDepthFrame *pDepthFrame, *pDepthFrameBack;
 	KCBColorFrame *pColorFrame, *pColorFrameBack;
 	KCBInfraredFrame *pInfraredFrame, *pInfraredFrameBack;
-	//KCBBodyFrame* pBodyFrame; // not using this yet
+	// KCBBodyFrame* pBodyFrame; // not using this yet
 
 	JointOrientation jointOrients[JointType_Count];
 	Joint joints[JointType_Count];
+
+	HandState leftHandState, rightHandState;
 
 	KCBBodyIndexFrame *pBodyIndexFrame, *pBodyIndexFrameBack;
 
