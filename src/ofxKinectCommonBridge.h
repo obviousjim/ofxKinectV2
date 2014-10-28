@@ -82,6 +82,8 @@ class ofxKinectCommonBridge : protected ofThread {
 
 	ofPixels& getColorPixelsRef();
 	ofPixels& getDepthPixelsRef();       	///< grayscale values
+	ofPixels& getBodyIndexPixelsRef();
+	
 	ofShortPixels& getRawDepthPixelsRef();	///< raw 11 bit values
 	ofFloatPixels& getFloatDepthPixelsRef();	///normalized 0 - 1, only works if setRawTextureUsesFloats is true
 	ofShortPixels& getIRPixelsRef();

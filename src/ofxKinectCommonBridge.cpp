@@ -250,6 +250,11 @@ ofPixels& ofxKinectCommonBridge::getColorPixelsRef(){
 }
 
 //------------------------------------
+ofPixels & ofxKinectCommonBridge::getBodyIndexPixelsRef() {
+	return bodyIndexPixels;
+}
+
+//------------------------------------
 ofPixels & ofxKinectCommonBridge::getDepthPixelsRef(){       	///< grayscale values
 	return depthPixels;
 }
@@ -464,13 +469,11 @@ bool ofxKinectCommonBridge::initDepthStream( bool mapDepthToColor )
 		return false;
 	}
 
+	// NOTE: This does nothing anymore. Should be deprecated.
 	mappingDepthToColor = mapDepthToColor;
-
 
 	HRESULT hr;
 	hr = KCBGetDepthFrameDescription(hKinect, &depthFrameDescription);
-
-	//hr = KCBCreateDepthFrame(depthFrameDescription, &pDepthFrame);
 
 	if(bProgrammableRenderer) {
 		depthPixels.allocate(depthFrameDescription.width, depthFrameDescription.height, OF_IMAGE_COLOR);
@@ -772,6 +775,7 @@ vector<ofVec3f> ofxKinectCommonBridge::mapDepthToSkeleton(const vector<ofPoint>&
 	}
 	return points;
 }
+
 
 //----------------------------------------------------------
 ofVec2f ofxKinectCommonBridge::mapDepthToColor(ofPoint depthPoint, ofPoint shift){
