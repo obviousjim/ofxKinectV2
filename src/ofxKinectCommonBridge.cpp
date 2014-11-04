@@ -155,7 +155,7 @@ void ofxKinectCommonBridge::update()
 				swap(pColorFrame, pColorFrameBack);
 				if( bProgrammableRenderer ) {
 					// programmable renderer likes this
-					videoTex.loadData(pColorFrame->Buffer, colorFrameDescription.width, colorFrameDescription.height, GL_RG16);
+					videoTex.loadData(pColorFrame->Buffer, colorFrameDescription.width, colorFrameDescription.height, GL_RGBA);
 				} else {
 					videoTex.loadData(pColorFrame->Buffer, colorFrameDescription.width, colorFrameDescription.height, GL_RGBA);
 				}
@@ -541,7 +541,7 @@ bool ofxKinectCommonBridge::initColorStream( bool mapColorToDepth, ColorImageFor
 {
 
 	if(hKinect == NULL){
-		ofLogError("ofxKinectCommonBridge::initDepthStream") << "Cannot init depth stream until initSensor() is called";
+		ofLogError("ofxKinectCommonBridge::initColorStream") << "Cannot init color stream until initSensor() is called";
 		return false;
 	}
 
