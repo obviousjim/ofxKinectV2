@@ -155,7 +155,7 @@ void ofxKinectCommonBridge::update()
 				swap(pColorFrame, pColorFrameBack);
 				if( bProgrammableRenderer ) {
 					// programmable renderer likes this
-					videoTex.loadData(pColorFrame->Buffer, colorFrameDescription.width, colorFrameDescription.height, GL_RG16);
+					videoTex.loadData(pColorFrame->Buffer, colorFrameDescription.width, colorFrameDescription.height, GL_RGBA);
 				} else {
 					videoTex.loadData(pColorFrame->Buffer, colorFrameDescription.width, colorFrameDescription.height, GL_RGBA);
 				}
@@ -247,6 +247,11 @@ ofPixels& ofxKinectCommonBridge::getColorPixelsRef(){
 		ofLogWarning("ofxKinectCommonBridge::getColorPixelsRef") << "Getting Color Pixels when color stream unitialized";
 	}
 	return videoPixels;
+}
+
+//------------------------------------
+ofPixels & ofxKinectCommonBridge::getBodyIndexPixelsRef() {
+	return bodyIndexPixels;
 }
 
 //------------------------------------
@@ -464,13 +469,11 @@ bool ofxKinectCommonBridge::initDepthStream( bool mapDepthToColor )
 		return false;
 	}
 
+	// NOTE: This does nothing anymore. Should be deprecated.
 	mappingDepthToColor = mapDepthToColor;
-
 
 	HRESULT hr;
 	hr = KCBGetDepthFrameDescription(hKinect, &depthFrameDescription);
-
-	//hr = KCBCreateDepthFrame(depthFrameDescription, &pDepthFrame);
 
 	if(bProgrammableRenderer) {
 		depthPixels.allocate(depthFrameDescription.width, depthFrameDescription.height, OF_IMAGE_COLOR);
@@ -538,7 +541,7 @@ bool ofxKinectCommonBridge::initColorStream( bool mapColorToDepth, ColorImageFor
 {
 
 	if(hKinect == NULL){
-		ofLogError("ofxKinectCommonBridge::initDepthStream") << "Cannot init depth stream until initSensor() is called";
+		ofLogError("ofxKinectCommonBridge::initColorStream") << "Cannot init color stream until initSensor() is called";
 		return false;
 	}
 
@@ -772,6 +775,7 @@ vector<ofVec3f> ofxKinectCommonBridge::mapDepthToSkeleton(const vector<ofPoint>&
 	}
 	return points;
 }
+
 
 //----------------------------------------------------------
 ofVec2f ofxKinectCommonBridge::mapSkeletonToDepth(ofVec3f skeletonPoint){
